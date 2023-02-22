@@ -1,11 +1,13 @@
 package com.example.polymapi;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,19 +26,10 @@ public class MainActivity extends AppCompatActivity {
         uploadButton = findViewById(R.id.upload);
 
         // Set the initial text of the button
-        tourButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleTourMode();
-            }
-        });
+        tourButton.setOnClickListener(view -> toggleTourMode());
 
-        uploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleUploadMode();
-            }
-        });
+        uploadButton.setOnClickListener(view -> toggleUploadMode());
+
     }
 
     /**
@@ -74,6 +67,20 @@ public class MainActivity extends AppCompatActivity {
         }
         uploadRunning = !uploadRunning;
 
+    }
+
+    private void addPendingTour(View tour) {
+        // Get a reference to your table layout
+        TableLayout myLayout = findViewById(R.id.pending_tours);
+
+        // Create a new table row
+        TableRow row = new TableRow(this);
+
+        // Add the View to the row
+        row.addView(tour);
+
+        // Add the row to the table layout
+        myLayout.addView(row);
     }
 
 }

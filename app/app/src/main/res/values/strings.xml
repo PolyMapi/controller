@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">Mapillary-app</string>
-    <string name="start_tour">Start tour</string>
-    <string name="stop_tour">Stop tour</string>
-    <string name="start_upload">Start upload</string>
-    <string name="stop_upload">Stop upload</string>
-</resources>

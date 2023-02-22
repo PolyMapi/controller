@@ -3,7 +3,6 @@ package com.example.polymapi;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
@@ -44,10 +43,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if(tourRunning) {
-            tourButton.setText("Start tour");
+            tourButton.setText(R.string.start_tour);
         }
         else {
-            tourButton.setText("Stop tour");
+            tourButton.setText(R.string.stop_tour);
         }
         tourRunning = !tourRunning;
     }
@@ -60,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if(uploadRunning) {
-            uploadButton.setText("Start tour");
+            uploadButton.setText(R.string.start_upload);
         }
         else {
-            uploadButton.setText("Stop tour");
+            uploadButton.setText(R.string.stop_upload);
         }
         uploadRunning = !uploadRunning;
 

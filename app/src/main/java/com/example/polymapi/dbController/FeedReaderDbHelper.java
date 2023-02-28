@@ -6,14 +6,25 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class FeedReaderDbHelper extends SQLiteOpenHelper {
 
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + FeedReaderContract.FeedEntry.TABLE_NAME + " (" +
-                    FeedReaderContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE + " TEXT," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE + " TEXT)";
+    private static final String SQL_CREATE_IMGREFS_TABLE =
+            "CREATE TABLE " + FeedReaderContract.ImgRefsEntry.TABLE_NAME + " (" +
+                    FeedReaderContract.ImgRefsEntry._ID + " INTEGER PRIMARY KEY," +
+                    FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID + " INTEGER," +
+                    FeedReaderContract.ImgRefsEntry.COLUMN_NAME_REF + " TEXT)";
 
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + FeedReaderContract.FeedEntry.TABLE_NAME;
+    private static final String SQL_DELETE_IMGREFS_TABLE =
+            "DROP TABLE IF EXISTS " + FeedReaderContract.ImgRefsEntry.TABLE_NAME;
+
+    private static final String SQL_CREATE_COORDINATES_TABLE =
+            "CREATE TABLE " + FeedReaderContract.CoordinatesEntry.TABLE_NAME + " (" +
+                    FeedReaderContract.CoordinatesEntry._ID + " INTEGER PRIMARY KEY," +
+                    FeedReaderContract.CoordinatesEntry.COLUMN_NAME_CAPTURE_ID + " INTEGER," +
+                    FeedReaderContract.CoordinatesEntry.COLUMN_NAME_LATITUDE + " REAL," +
+                    FeedReaderContract.CoordinatesEntry.COLUMN_NAME_LONGITUDE + " REAL," +
+                    FeedReaderContract.CoordinatesEntry.COLUMN_NAME_TIMESTAMP + " TEXT)";
+
+    private static final String SQL_DELETE_COORDINATES_TABLE =
+            "DROP TABLE IF EXISTS " + FeedReaderContract.CoordinatesEntry.TABLE_NAME;
 
 
     // If you change the database schema, you must increment the database version.
@@ -26,12 +37,14 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
+        db.execSQL(SQL_CREATE_IMGREFS_TABLE);
+        db.execSQL(SQL_CREATE_COORDINATES_TABLE);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_ENTRIES);
+        db.execSQL(SQL_DELETE_IMGREFS_TABLE);
+        db.execSQL(SQL_DELETE_COORDINATES_TABLE);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

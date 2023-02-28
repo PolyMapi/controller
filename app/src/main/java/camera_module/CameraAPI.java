@@ -112,7 +112,9 @@ public class CameraAPI {
     /////////////////FUNCTIONS/////////////////
 
     //initialize the camera
-    public void initCamera() {
+    //  with 5376x2688 resolution if highResolution = true,
+    //  with 2048x1024 resolution else
+    public void initCamera(boolean highResolution) {
         nameRef = 0;
         try {
             //begin session and get sessionId
@@ -120,6 +122,12 @@ public class CameraAPI {
             String sessionId = getSessionId(response.toString());
             //set options
             response = query("http://192.168.1.1/osc/commands/execute", "{\"name\": \"camera.setOptions\",\"parameters\": {\"sessionId\": \"" + sessionId + "\" ,\"options\": {\"clientVersion\": 2}}}");
+            //set resolution
+            if (highResolution) {
+                response = query("http://192.168.1.1/osc/commands/execute", "{\"name\": \"camera.setOptions\",\"parameters\": {\"options\": {\"fileFormat\": {\"type\": \"jpeg\",\"width\": 5376,\"height\": 2688}}}}");
+            } else {
+                response = query("http://192.168.1.1/osc/commands/execute", "{\"name\": \"camera.setOptions\",\"parameters\": {\"options\": {\"fileFormat\": {\"type\": \"jpeg\",\"width\": 2048,\"height\": 1024}}}}");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

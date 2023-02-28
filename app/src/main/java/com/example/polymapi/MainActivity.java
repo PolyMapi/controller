@@ -8,6 +8,10 @@ import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.IOException;
+
+import exif.ExifHandler;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button tourButton;
@@ -28,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         tourButton.setOnClickListener(view -> toggleTourMode());
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
-
     }
 
     /**
@@ -62,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
             uploadButton.setText(R.string.start_upload);
         }
         else {
+            try {
+                ExifHandler.readDate("snek");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             uploadButton.setText(R.string.stop_upload);
         }
         uploadRunning = !uploadRunning;

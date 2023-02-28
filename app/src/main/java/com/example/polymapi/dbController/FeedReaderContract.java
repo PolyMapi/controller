@@ -22,5 +22,12 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_LONGITUDE = "longitude";
         public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
+
+    /* Inner class that defines the table contents for the "ImgPath" table */
+    public static class ImgPathEntry implements BaseColumns {
+        public static final String TABLE_NAME = "ImgPath";
+        public static final String COLUMN_NAME_CAPTURE_ID = "capture_id";
+        public static final String COLUMN_NAME_PATH_ID = "path";
+    }
 }
 

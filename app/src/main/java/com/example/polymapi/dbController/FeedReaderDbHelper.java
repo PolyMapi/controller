@@ -26,6 +26,15 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_COORDINATES_TABLE =
             "DROP TABLE IF EXISTS " + FeedReaderContract.CoordinatesEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_IMGPATH_TABLE =
+            "CREATE TABLE " + FeedReaderContract.ImgPathEntry.TABLE_NAME + " (" +
+                    FeedReaderContract.ImgPathEntry._ID + " INTEGER PRIMARY KEY," +
+                    FeedReaderContract.ImgPathEntry.COLUMN_NAME_CAPTURE_ID + " INTEGER," +
+                    FeedReaderContract.ImgPathEntry.COLUMN_NAME_PATH_ID + " TEXT)";
+
+    private static final String SQL_DELETE_IMGPATH_TABLE =
+            "DROP TABLE IF EXISTS " + FeedReaderContract.ImgPathEntry.TABLE_NAME;
+
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
@@ -39,12 +48,14 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_IMGREFS_TABLE);
         db.execSQL(SQL_CREATE_COORDINATES_TABLE);
+        db.execSQL(SQL_CREATE_IMGPATH_TABLE);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         db.execSQL(SQL_DELETE_IMGREFS_TABLE);
         db.execSQL(SQL_DELETE_COORDINATES_TABLE);
+        db.execSQL(SQL_DELETE_IMGPATH_TABLE);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

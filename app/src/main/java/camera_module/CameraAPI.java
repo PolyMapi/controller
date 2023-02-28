@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 
 public class CameraAPI {
 
+    private static int nameRef;
     /////////////////PARAMETERS/////////////////
     private static int MAX_ATTEMPTS = 5; // Nombre maximum de tentatives pour une requête
 
@@ -110,7 +111,9 @@ public class CameraAPI {
 
     /////////////////FUNCTIONS/////////////////
 
+    //initialize the camera
     public void initCamera() {
+        nameRef = 0;
         try {
             //begin session and get sessionId
             StringBuffer response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.startSession\" }");
@@ -122,7 +125,7 @@ public class CameraAPI {
         }
     }
 
-    //A TESTER
+    //take a picture and return the image reference
     public String takePicture(){
         String imageRef = "";
         try {
@@ -131,8 +134,11 @@ public class CameraAPI {
 
             if (!lastImageUrl.equals("")) {
                 response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.takePicture\"}");
-                int nameRef = getNameRef(lastImageUrl);
-                imageRef = String.format("%07d", nameRef + 1);
+                if (nameRef == 0) {
+                    nameRef = getNameRef(lastImageUrl);
+                }
+                nameRef += 1;
+                imageRef = String.format("%07d", nameRef);
             } else {
                 String url = "";
                 response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.takePicture\"}");
@@ -140,7 +146,7 @@ public class CameraAPI {
                     response = query("http://192.168.1.1/osc/state", "{}");
                     url = getURL(response.toString());
                 }
-                int nameRef = getNameRef(url);
+                nameRef = getNameRef(url);
                 imageRef = String.format("%07d", nameRef);
             }
         } catch (IOException e) {
@@ -163,6 +169,7 @@ public class CameraAPI {
         return imageRefs;
     }
 
+    //download the picture which corresponds to the imageRef in the "pictures" directory
     public void downloadPicture(String imageRef){
         //download image in pictures directory
         try {
@@ -174,9 +181,25 @@ public class CameraAPI {
         }
     }
 
+    //download a group of pictures which corresponds to imageRefs in the "pictures" directory
     public void downloadPictures(String[] imageRefs){
         for (int i=0; i<imageRefs.length; i++){
             downloadPicture(imageRefs[i]);
+        }
+    }
+
+    //delete every pictures downloaded in the "pictures" directory
+    public void clearPictures() {
+        File directory = new File("./pictures");
+
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
+                }
+            }
         }
     }
 }

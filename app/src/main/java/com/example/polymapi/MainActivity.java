@@ -8,6 +8,8 @@ import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import camera_module.CameraAPI;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button tourButton;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
 
+        CameraAPI cam = new CameraAPI();
+        cam.testFunctions();
     }
 
     /**

@@ -21,6 +21,8 @@ import exif.ExifHandler;
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
 
+import camera_module.Task;
+
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;
     private Button uploadButton;
@@ -42,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         tourButton.setOnClickListener(view -> toggleTourMode());
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
+
+        Task task = new Task();
+        task.start();
 
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());

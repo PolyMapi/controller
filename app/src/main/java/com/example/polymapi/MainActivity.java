@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
 
+        /*
         CaptureTask cTask = new CaptureTask();
         cTask.start();
         String[] imageRefs = new String[5];
@@ -62,7 +63,9 @@ public class MainActivity extends AppCompatActivity {
         imageRefs[3] = "00";
         imageRefs[4] = "00";
 
+
         DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
+         */
     }
 
     @Override
@@ -83,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
         if(uploadRunning) {
             return;
         }
-        if(tourRunning) {
+        if(tourRunning) { // stop tour
             tourButton.setText(R.string.start_tour);
         }
-        else {
+        else { // start tour
             // The following part is a test of the ExifHandler class
             String path = "/storage/emulated/0/Pictures/IMG_20230303_102701.jpg";
             String res1;

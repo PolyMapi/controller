@@ -1,5 +1,8 @@
 package camera_module;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -9,6 +12,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.io.FileUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.Request;
+import okhttp3.Response;
+import java.io.IOException;
 
 public class CameraAPI {
 
@@ -18,66 +27,26 @@ public class CameraAPI {
 
     /////////////////TOOLS/////////////////
 
-    private static StringBuffer query(String urlString, String data) throws IOException {
+    private static String query(String urlString, String data) throws IOException {
 
-        //Le contenu de la réponse POST
-        StringBuffer content = new StringBuffer();
+        OkHttpClient client = new OkHttpClient();
 
+        RequestBody body = RequestBody.create(data, MediaType.parse("application/json"));
 
-        int attemptCount = 0; // Compteur de tentatives
-        while (attemptCount < MAX_ATTEMPTS) {
+        Request request = new Request.Builder()
+                .url(urlString)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
 
-            try {
-                URL url = new URL(urlString);
-
-                /* Ouvre une connection avec l'object URL */
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                //Methode POST
-                connection.setRequestMethod("POST");
-                connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/json"); //
-
-                // Encodez les données POST à envoyer
-                byte[] postDataBytes = data.getBytes("UTF-8");
-
-                /* Écrit les données dans la requête POST */
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.write(postDataBytes);
-                wr.flush();
-                wr.close();
-
-                /* Utilise BufferedReader pour lire ligne par ligne */
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-                //La ligne courante
-                String inputLine;
-
-                /* Pour chaque ligne dans la réponse POST */
-                while ((inputLine = in.readLine()) != null) { //attend bien la fin de la requête
-                    content.append(inputLine);
-                }
-
-                //Ferme BufferedReader
-                in.close();
-
-                break; // Sortir de la boucle si la requête réussit
-
-            } catch (IOException e) {
-                attemptCount++; // Augmenter le compteur de tentatives
-                if (attemptCount == MAX_ATTEMPTS) {
-                    // Si le nombre maximum de tentatives est atteint, arrêter la boucle
-                    throw e; // Lancer l'exception pour signaler l'échec de la requête
-                }
-                // Attendre avant de réessayer la requête
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
+        try (Response response = client.newCall(request).execute()) {
+            String responseData = response.body().string();
+            return responseData;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return content;
+        return "";
     }
 
     private static String getSessionId(String response) {
@@ -118,8 +87,8 @@ public class CameraAPI {
         nameRef = 0;
         try {
             //begin session and get sessionId
-            StringBuffer response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.startSession\" }");
-            String sessionId = getSessionId(response.toString());
+            String response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.startSession\" }");
+            String sessionId = getSessionId(response);
             //set options
             response = query("http://192.168.1.1/osc/commands/execute", "{\"name\": \"camera.setOptions\",\"parameters\": {\"sessionId\": \"" + sessionId + "\" ,\"options\": {\"clientVersion\": 2}}}");
             //set resolution
@@ -137,8 +106,8 @@ public class CameraAPI {
     public String takePicture(){
         String imageRef = "";
         try {
-            StringBuffer response = query("http://192.168.1.1/osc/state", "{}");
-            String lastImageUrl = getURL(response.toString());
+            String response = query("http://192.168.1.1/osc/state", "{}");
+            String lastImageUrl = getURL(response);
 
             if (!lastImageUrl.equals("")) {
                 response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.takePicture\"}");
@@ -152,7 +121,7 @@ public class CameraAPI {
                 response = query("http://192.168.1.1/osc/commands/execute", "{\"name\" : \"camera.takePicture\"}");
                 while (url.equals("")) {
                     response = query("http://192.168.1.1/osc/state", "{}");
-                    url = getURL(response.toString());
+                    url = getURL(response);
                 }
                 nameRef = getNameRef(url);
                 imageRef = String.format("%07d", nameRef);
@@ -178,21 +147,22 @@ public class CameraAPI {
     }
 
     //download the picture which corresponds to the imageRef in the "pictures" directory
-    public void downloadPicture(String imageRef){
+    public void downloadPicture(String imageRef, Context context){
         //download image in pictures directory
         try {
             URL url = new URL("http://192.168.1.1/files/035344534c303847803aea0cf9010c01/100RICOH/R" + imageRef + ".JPG");
-            File download = new File("./pictures/R" + imageRef + ".JPG");
+            File download = new File(context.getFilesDir() + "/pictures/R" + imageRef + ".JPG");
             FileUtils.copyURLToFile(url, download);
+            Log.d("task", "download " + imageRef + " completed");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     //download a group of pictures which corresponds to imageRefs in the "pictures" directory
-    public void downloadPictures(String[] imageRefs){
+    public void downloadPictures(String[] imageRefs, Context context){
         for (int i=0; i<imageRefs.length; i++){
-            downloadPicture(imageRefs[i]);
+            downloadPicture(imageRefs[i], context);
         }
     }
 
@@ -210,4 +180,5 @@ public class CameraAPI {
             }
         }
     }
+
 }

@@ -27,6 +27,7 @@ import dbHandler.FeedReaderDbHelper;
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;
     private Button uploadButton;
+    private Button clearDbButter;
     private boolean tourRunning = false;
     private boolean uploadRunning = false;
 
@@ -40,11 +41,17 @@ public class MainActivity extends AppCompatActivity {
         // Get reference to the buttons
         tourButton = findViewById(R.id.tour);
         uploadButton = findViewById(R.id.upload);
+        clearDbButter = findViewById(R.id.clearDb);
 
         // Set the initial text of the button
         tourButton.setOnClickListener(view -> toggleTourMode());
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
+
+        clearDbButter.setOnClickListener(view -> clearDb());
+
+        // DataBase setup
+        dbHelper = new FeedReaderDbHelper(getApplicationContext());
 
         CaptureTask cTask = new CaptureTask();
         cTask.start();
@@ -56,10 +63,6 @@ public class MainActivity extends AppCompatActivity {
         imageRefs[4] = "00";
 
         DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
-
-        // DataBase setup
-        dbHelper = new FeedReaderDbHelper(getApplicationContext());
-
     }
 
     @Override
@@ -131,6 +134,11 @@ public class MainActivity extends AppCompatActivity {
         }
         uploadRunning = !uploadRunning;
 
+    }
+
+    private void clearDb() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.clearDb(db);
     }
 
     private void addPendingTour(View tour) {

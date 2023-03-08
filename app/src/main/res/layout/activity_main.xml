@@ -7,6 +7,15 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/clearDb"
+        android:layout_width="190dp"
+        android:layout_height="50dp"
+        android:text="@string/clear_database"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <Button
         android:id="@+id/tour"
         android:layout_width="271dp"
         android:layout_height="60dp"

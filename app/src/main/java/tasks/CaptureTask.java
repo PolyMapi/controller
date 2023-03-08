@@ -34,6 +34,6 @@ public class CaptureTask extends Thread{
         long stop = System.currentTimeMillis();
         long elapsed = (stop - start) / 1000;
         Log.d("task", "END");
-        Log.d("task","Durée d'exécution totale : " + elapsed + "s");
+        Log.d("task","Durée des captures : " + elapsed + "s");
     }
 }

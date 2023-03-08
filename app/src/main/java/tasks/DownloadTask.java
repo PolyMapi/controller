@@ -1,6 +1,7 @@
 package tasks;
 
 import android.content.Context;
+import android.util.Log;
 
 import camera_module.CameraAPI;
 
@@ -14,7 +15,14 @@ public class DownloadTask extends Thread{
     }
 
     public void run(){
+        long start = System.currentTimeMillis();
+
         CameraAPI cam = new CameraAPI();
         cam.downloadPictures(imageRefs, context);
+
+        long stop = System.currentTimeMillis();
+        long elapsed = (stop - start) / 1000;
+        Log.d("task", "END");
+        Log.d("task","Durée des downloads : " + elapsed + "s");
     }
 }

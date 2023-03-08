@@ -49,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
         CaptureTask cTask = new CaptureTask();
         cTask.start();
         String[] imageRefs = new String[5];
-        imageRefs[0] = "";
-        imageRefs[1] = "";
-        imageRefs[2] = "";
-        imageRefs[3] = "";
-        imageRefs[4] = "";
+        imageRefs[0] = "00";
+        imageRefs[1] = "00";
+        imageRefs[2] = "00";
+        imageRefs[3] = "00";
+        imageRefs[4] = "00";
 
         DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
 

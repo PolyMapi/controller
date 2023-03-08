@@ -24,13 +24,28 @@ import java.io.IOException;
 
 public class CameraAPI {
 
+    private static CameraAPI instance;
     private static int nameRef;
     /////////////////PARAMETERS/////////////////
     private static int MAX_ATTEMPTS = 5; // Nombre maximum de tentatives pour une requête
 
+
+    /////////////////CONSTRUCTOR/////////////////
+
+    private CameraAPI(){
+        initCamera(false);
+    }
+
+    public static CameraAPI getInstance(){
+        if (instance == null){
+            instance = new CameraAPI();
+        }
+        return instance;
+    }
+
     /////////////////TOOLS/////////////////
 
-    private static String query(String urlString, String data) throws IOException {
+    private String query(String urlString, String data) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
 
@@ -52,25 +67,25 @@ public class CameraAPI {
         return "";
     }
 
-    private static String getSessionId(String response) {
+    private String getSessionId(String response) {
         String res = response.split("SID_")[1];
         res = res.substring(0, 4);
         return "SID_" + res;
     }
 
-    private static String getFingerprint(String response) {
+    private String getFingerprint(String response) {
         String res = response.split("FIG_")[1];
         res = res.substring(0, 4);
         return "FIG_" + res;
     }
 
-    private static String getURL(String response) {
+    private String getURL(String response) {
         String res = response.split("_latestFileUrl\":\"")[1];
         res = res.split("\",\"_batteryState")[0];
         return res;
     }
 
-    private static int getNameRef(String url) {
+    private int getNameRef(String url) {
         String name = url.split("/100RICOH/R")[1].substring(0, 7);
         int nameRef = 0;
         try {
@@ -103,6 +118,7 @@ public class CameraAPI {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d("task", "initCamera done");
     }
 
     //take a picture and return the image reference
@@ -157,9 +173,15 @@ public class CameraAPI {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
-            InputStream input = connection.getInputStream();
-            OutputStream output = new FileOutputStream(context.getFilesDir().getAbsolutePath() + "/pictures/R" + imageRef + ".JPG");
+            File picturesDir = new File(context.getFilesDir(), "pictures");
+            if (!picturesDir.exists()) {
+                picturesDir.mkdirs();
+            }
 
+            File outputFile = new File(picturesDir, "R" + imageRef + ".JPG");
+            OutputStream output = new FileOutputStream(outputFile);
+
+            InputStream input = connection.getInputStream();
             byte[] buffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {

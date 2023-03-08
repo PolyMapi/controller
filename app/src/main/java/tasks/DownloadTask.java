@@ -17,9 +17,7 @@ public class DownloadTask extends Thread{
     public void run(){
         long start = System.currentTimeMillis();
 
-        CameraAPI cam = new CameraAPI();
-        cam.initCamera(false);
-        cam.downloadPictures(imageRefs, context);
+        CameraAPI.getInstance().downloadPictures(imageRefs, context);
 
         long stop = System.currentTimeMillis();
         long elapsed = (stop - start) / 1000;

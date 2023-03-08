@@ -4,37 +4,22 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import java.io.File;
 import java.io.IOException;
 
 import exif.ExifHandler;
 
-import com.example.polymapi.dbController.FeedReaderContract;
-import com.example.polymapi.dbController.FeedReaderDbHelper;
-
-import java.util.ArrayList;
-import java.util.List;
+import dbHandler.FeedReaderContract;
+import dbHandler.FeedReaderDbHelper;
 
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;

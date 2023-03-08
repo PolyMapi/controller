@@ -1,6 +1,8 @@
-package camera_module;
+package tasks;
 
 import android.content.Context;
+
+import camera_module.CameraAPI;
 
 public class DownloadTask extends Thread{
     String[] imageRefs;

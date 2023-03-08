@@ -1,6 +1,8 @@
-package camera_module;
+package tasks;
 
 import android.util.Log;
+
+import camera_module.CameraAPI;
 
 public class CaptureTask extends Thread{
 

@@ -16,13 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
-import camera_module.DownloadTask;
+import tasks.DownloadTask;
 import exif.ExifHandler;
 
-import com.example.polymapi.dbController.FeedReaderContract;
-import com.example.polymapi.dbController.FeedReaderDbHelper;
+import tasks.CaptureTask;
 
-import camera_module.CaptureTask;
+import dbHandler.FeedReaderContract;
+import dbHandler.FeedReaderDbHelper;
 
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;

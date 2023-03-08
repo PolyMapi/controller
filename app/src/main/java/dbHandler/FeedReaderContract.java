@@ -1,4 +1,4 @@
-package com.example.polymapi.dbController;
+package dbHandler;
 
 import android.provider.BaseColumns;
 

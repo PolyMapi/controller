@@ -4,39 +4,25 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import java.io.File;
 import java.io.IOException;
 
+import camera_module.DownloadTask;
 import exif.ExifHandler;
 
 import com.example.polymapi.dbController.FeedReaderContract;
 import com.example.polymapi.dbController.FeedReaderDbHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import camera_module.Task;
+import camera_module.CaptureTask;
 
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;
@@ -60,8 +46,16 @@ public class MainActivity extends AppCompatActivity {
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
 
-        Task task = new Task();
-        task.start();
+        CaptureTask cTask = new CaptureTask();
+        cTask.start();
+        String[] imageRefs = new String[5];
+        imageRefs[0] = "";
+        imageRefs[1] = "";
+        imageRefs[2] = "";
+        imageRefs[3] = "";
+        imageRefs[4] = "";
+
+        DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
 
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());

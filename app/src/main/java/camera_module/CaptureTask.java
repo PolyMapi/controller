@@ -2,7 +2,7 @@ package camera_module;
 
 import android.util.Log;
 
-public class Task extends Thread{
+public class CaptureTask extends Thread{
 
 
 
@@ -28,9 +28,6 @@ public class Task extends Thread{
         for(String ref : imageRefs){
             Log.d("task", ref);
         }
-
-
-        //cam.downloadPictures(imageRefs);
 
         long stop = System.currentTimeMillis();
         long elapsed = (stop - start) / 1000;

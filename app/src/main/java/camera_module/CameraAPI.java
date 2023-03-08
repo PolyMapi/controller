@@ -1,5 +1,8 @@
 package camera_module;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -144,21 +147,22 @@ public class CameraAPI {
     }
 
     //download the picture which corresponds to the imageRef in the "pictures" directory
-    public void downloadPicture(String imageRef){
+    public void downloadPicture(String imageRef, Context context){
         //download image in pictures directory
         try {
             URL url = new URL("http://192.168.1.1/files/035344534c303847803aea0cf9010c01/100RICOH/R" + imageRef + ".JPG");
-            File download = new File("./pictures/R" + imageRef + ".JPG");
+            File download = new File(context.getFilesDir() + "/pictures/R" + imageRef + ".JPG");
             FileUtils.copyURLToFile(url, download);
+            Log.d("task", "download " + imageRef + " completed");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     //download a group of pictures which corresponds to imageRefs in the "pictures" directory
-    public void downloadPictures(String[] imageRefs){
+    public void downloadPictures(String[] imageRefs, Context context){
         for (int i=0; i<imageRefs.length; i++){
-            downloadPicture(imageRefs[i]);
+            downloadPicture(imageRefs[i], context);
         }
     }
 

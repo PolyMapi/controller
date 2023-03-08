@@ -26,6 +26,7 @@ import camera_module.Task;
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;
     private Button uploadButton;
+    private Button clearDbButter;
     private boolean tourRunning = false;
     private boolean uploadRunning = false;
 
@@ -39,11 +40,14 @@ public class MainActivity extends AppCompatActivity {
         // Get reference to the buttons
         tourButton = findViewById(R.id.tour);
         uploadButton = findViewById(R.id.upload);
+        clearDbButter = findViewById(R.id.clearDb);
 
         // Set the initial text of the button
         tourButton.setOnClickListener(view -> toggleTourMode());
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
+
+        clearDbButter.setOnClickListener(view -> clearDb());
 
         Task task = new Task();
         task.start();
@@ -122,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
         }
         uploadRunning = !uploadRunning;
 
+    }
+
+    private void clearDb() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.clearDb(db);
     }
 
     private void addPendingTour(View tour) {

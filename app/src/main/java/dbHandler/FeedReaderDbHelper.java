@@ -61,4 +61,14 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
+
+    public void clearDb(SQLiteDatabase db) {
+        db.execSQL(SQL_DELETE_IMGREFS_TABLE);
+        db.execSQL(SQL_DELETE_COORDINATES_TABLE);
+        db.execSQL(SQL_DELETE_IMGPATH_TABLE);
+
+        db.execSQL(SQL_CREATE_IMGREFS_TABLE);
+        db.execSQL(SQL_CREATE_COORDINATES_TABLE);
+        db.execSQL(SQL_CREATE_IMGPATH_TABLE);
+    }
 }

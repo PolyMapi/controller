@@ -18,6 +18,7 @@ public class DownloadTask extends Thread{
         long start = System.currentTimeMillis();
 
         CameraAPI cam = new CameraAPI();
+        cam.initCamera(false);
         cam.downloadPictures(imageRefs, context);
 
         long stop = System.currentTimeMillis();

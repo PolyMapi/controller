@@ -16,10 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
+import tasks.CaptureTask;
 import tasks.DownloadTask;
 import exif.ExifHandler;
-
-import tasks.CaptureTask;
 
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
@@ -53,16 +52,17 @@ public class MainActivity extends AppCompatActivity {
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
 
-        CaptureTask cTask = new CaptureTask();
-        cTask.start();
+        //CaptureTask cTask = new CaptureTask();
+        //cTask.start();
         String[] imageRefs = new String[5];
-        imageRefs[0] = "00";
-        imageRefs[1] = "00";
-        imageRefs[2] = "00";
-        imageRefs[3] = "00";
-        imageRefs[4] = "00";
+        imageRefs[0] = "0011012";
+        imageRefs[1] = "0011013";
+        imageRefs[2] = "0011014";
+        imageRefs[3] = "0011015";
+        imageRefs[4] = "0011016";
 
         DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
+        dTask.start();
     }
 
     @Override

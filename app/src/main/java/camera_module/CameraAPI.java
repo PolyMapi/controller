@@ -6,8 +6,11 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -151,8 +154,20 @@ public class CameraAPI {
         //download image in pictures directory
         try {
             URL url = new URL("http://192.168.1.1/files/035344534c303847803aea0cf9010c01/100RICOH/R" + imageRef + ".JPG");
-            File download = new File(context.getFilesDir() + "/pictures/R" + imageRef + ".JPG");
-            FileUtils.copyURLToFile(url, download);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+
+            InputStream input = connection.getInputStream();
+            OutputStream output = new FileOutputStream(context.getFilesDir().getAbsolutePath() + "/pictures/R" + imageRef + ".JPG");
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+
+            output.close();
+            input.close();
             Log.d("task", "download " + imageRef + " completed");
         } catch (IOException e) {
             throw new RuntimeException(e);

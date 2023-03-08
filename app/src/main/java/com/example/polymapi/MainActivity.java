@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint({"Missing permission", "MissingPermission"})
+    @SuppressLint( "MissingPermission")
     private void getLastLocation(){
         CurrentLocationRequest currentLocationRequest = new CurrentLocationRequest.Builder()
                 .setGranularity(Granularity.GRANULARITY_FINE)

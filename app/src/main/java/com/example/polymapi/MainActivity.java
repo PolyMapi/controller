@@ -22,6 +22,7 @@ import exif.ExifHandler;
 
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
+import tasks.UploadTask;
 
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;
@@ -54,15 +55,25 @@ public class MainActivity extends AppCompatActivity {
 
         //CaptureTask cTask = new CaptureTask();
         //cTask.start();
-        String[] imageRefs = new String[5];
+
+       /* String[] imageRefs = new String[5];
         imageRefs[0] = "0011012";
         imageRefs[1] = "0011013";
         imageRefs[2] = "0011014";
         imageRefs[3] = "0011015";
         imageRefs[4] = "0011016";
 
-        DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
-        dTask.start();
+        DownloadTask dTask = new DownloadTask(getApplicationContext(), imageRefs);
+        dTask.start();*/
+
+        /*String[] imagePaths = new String[5];
+        imagePaths[0] = "/data/user/0/com.example.polymapi/files/pictures/R0011012.JPG";
+        imagePaths[1] = "/data/user/0/com.example.polymapi/files/pictures/R0011013.JPG";
+        imagePaths[2] = "/data/user/0/com.example.polymapi/files/pictures/R0011014.JPG";
+        imagePaths[3] = "/data/user/0/com.example.polymapi/files/pictures/R0011015.JPG";
+        imagePaths[4] = "/data/user/0/com.example.polymapi/files/pictures/R0011016.JPG";
+        UploadTask uTask = new UploadTask(getApplicationContext()); //
+        uTask.start();*/
     }
 
     @Override

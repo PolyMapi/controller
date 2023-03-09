@@ -166,7 +166,8 @@ public class CameraAPI {
     }
 
     //download the picture which corresponds to the imageRef in the "pictures" directory
-    public void downloadPicture(String imageRef, Context context){
+    // return the path of the image
+    public String downloadPicture(String imageRef, Context context){
         //download image in pictures directory
         try {
             URL url = new URL("http://192.168.1.1/files/035344534c303847803aea0cf9010c01/100RICOH/R" + imageRef + ".JPG");
@@ -191,27 +192,45 @@ public class CameraAPI {
             output.close();
             input.close();
             Log.d("task", "download " + imageRef + " completed");
+            return context.getFilesDir().toString() + "/pictures/R" + imageRef + ".JPG";
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     //download a group of pictures which corresponds to imageRefs in the "pictures" directory
-    public void downloadPictures(String[] imageRefs, Context context){
+    //return all images path
+    public String[] downloadPictures(String[] imageRefs, Context context){
+        String[] paths = new String[imageRefs.length];
         for (int i=0; i<imageRefs.length; i++){
-            downloadPicture(imageRefs[i], context);
+            paths[i] = downloadPicture(imageRefs[i], context);
         }
+        return paths;
     }
 
     //delete every pictures downloaded in the "pictures" directory
-    public void clearPictures() {
-        File directory = new File("./pictures");
+    public void clearAllPictures(Context context) {
+        File directory = new File(context.getFilesDir(), "pictures");
 
         if (directory.exists() && directory.isDirectory()) {
             File[] files = directory.listFiles();
 
             if (files != null) {
                 for (File file : files) {
+                    file.delete();
+                }
+            }
+        }
+    }
+
+    //delete some pictures downloaded in the "pictures" directory
+    public void clearPictures(Context context, String[] imagePaths) {
+        File directory = new File(context.getFilesDir(), "pictures");
+
+        if (directory.exists() && directory.isDirectory()) {
+            for (int i=0; i<imagePaths.length; i++){
+                File file = new File(imagePaths[i]);
+                if (file != null) {
                     file.delete();
                 }
             }

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
+import dbHandler.DbHandler;
 import tasks.DownloadTask;
 import exif.ExifHandler;
 
@@ -128,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearDb() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        dbHelper.clearDb(db);
+        DbHandler.clearDb(dbHelper);
     }
 
     private void addPendingTour(View tour) {

@@ -34,7 +34,9 @@ public class DbHandler {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String[] projection = {
-                FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID
+                FeedReaderContract.ImgRefsEntry._ID,
+                FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID,
+                FeedReaderContract.ImgRefsEntry.COLUMN_NAME_REF
         };
 
         Cursor cursor = db.query(true,                       // DISTINCT keyword to retrieve only unique rows
@@ -109,7 +111,6 @@ public class DbHandler {
 
         db.delete(FeedReaderContract.ImgRefsEntry.TABLE_NAME, selection, selectionArgs);
     }
-
 
     //=========================== COORDINATES ============================
     public static void addCoordinates(FeedReaderDbHelper dbHelper, int captureId, float latitude, float longitude, String timestamp) {

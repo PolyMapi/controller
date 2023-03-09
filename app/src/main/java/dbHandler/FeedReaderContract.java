@@ -27,7 +27,7 @@ public final class FeedReaderContract {
     public static class ImgPathEntry implements BaseColumns {
         public static final String TABLE_NAME = "ImgPath";
         public static final String COLUMN_NAME_CAPTURE_ID = "capture_id";
-        public static final String COLUMN_NAME_PATH_ID = "path";
+        public static final String COLUMN_NAME_PATH = "path";
     }
 }
 

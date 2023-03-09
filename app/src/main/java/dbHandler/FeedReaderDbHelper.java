@@ -30,14 +30,14 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + FeedReaderContract.ImgPathEntry.TABLE_NAME + " (" +
                     FeedReaderContract.ImgPathEntry._ID + " INTEGER PRIMARY KEY," +
                     FeedReaderContract.ImgPathEntry.COLUMN_NAME_CAPTURE_ID + " INTEGER," +
-                    FeedReaderContract.ImgPathEntry.COLUMN_NAME_PATH_ID + " TEXT)";
+                    FeedReaderContract.ImgPathEntry.COLUMN_NAME_PATH + " TEXT)";
 
     private static final String SQL_DELETE_IMGPATH_TABLE =
             "DROP TABLE IF EXISTS " + FeedReaderContract.ImgPathEntry.TABLE_NAME;
 
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "FeedReader.db";
 
 
@@ -60,15 +60,5 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
-    }
-
-    public void clearDb(SQLiteDatabase db) {
-        db.execSQL(SQL_DELETE_IMGREFS_TABLE);
-        db.execSQL(SQL_DELETE_COORDINATES_TABLE);
-        db.execSQL(SQL_DELETE_IMGPATH_TABLE);
-
-        db.execSQL(SQL_CREATE_IMGREFS_TABLE);
-        db.execSQL(SQL_CREATE_COORDINATES_TABLE);
-        db.execSQL(SQL_CREATE_IMGPATH_TABLE);
     }
 }

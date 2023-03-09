@@ -10,17 +10,12 @@ public class CaptureTask extends Thread{
 
     public void run(){
         long start = System.currentTimeMillis();
-        CameraAPI cam = new CameraAPI();
 
-        //clearPictures();
-
-        //begin session and get sessionId
-        cam.initCamera(false);
-        Log.d("task", "initCamera done");
+        //CameraAPI.getInstance().clearPictures();
 
         String[] imageRefs = new String[5];
         for (int i=0; i<5; i++) {
-            imageRefs[i] = cam.takePicture();
+            imageRefs[i] = CameraAPI.getInstance().takePicture();
             try {
                 Thread.sleep(4000);
             } catch (InterruptedException e) {

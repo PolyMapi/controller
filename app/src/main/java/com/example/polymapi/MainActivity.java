@@ -14,15 +14,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
-import dbHandler.DbHandler;
+import tasks.CaptureTask;
 import tasks.DownloadTask;
+import tasks.UploadTask;
+import tasks.GpsTask;
+
 import exif.ExifHandler;
 
-import tasks.CaptureTask;
-
+import dbHandler.DbHandler;
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
-import tasks.GpsTask;
+
+
+
 
 public class MainActivity extends AppCompatActivity {
     private Button captureButton;
@@ -61,19 +65,30 @@ public class MainActivity extends AppCompatActivity {
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
 
-        /*
-        CaptureTask cTask = new CaptureTask();
-        cTask.start();
-        String[] imageRefs = new String[5];
-        imageRefs[0] = "00";
-        imageRefs[1] = "00";
-        imageRefs[2] = "00";
-        imageRefs[3] = "00";
-        imageRefs[4] = "00";
+        /////TASK TESTS/////
 
+        //CaptureTask cTask = new CaptureTask();
+        //cTask.start();
 
-        DownloadTask dTask = new DownloadTask(imageRefs , getApplicationContext());
-         */
+       /* String[] imageRefs = new String[5];
+        imageRefs[0] = "0011012";
+        imageRefs[1] = "0011013";
+        imageRefs[2] = "0011014";
+        imageRefs[3] = "0011015";
+        imageRefs[4] = "0011016";
+
+        DownloadTask dTask = new DownloadTask(getApplicationContext(), imageRefs);
+        dTask.start();*/
+
+        /*String[] imagePaths = new String[5];
+        imagePaths[0] = "/data/user/0/com.example.polymapi/files/pictures/R0011012.JPG";
+        imagePaths[1] = "/data/user/0/com.example.polymapi/files/pictures/R0011013.JPG";
+        imagePaths[2] = "/data/user/0/com.example.polymapi/files/pictures/R0011014.JPG";
+        imagePaths[3] = "/data/user/0/com.example.polymapi/files/pictures/R0011015.JPG";
+        imagePaths[4] = "/data/user/0/com.example.polymapi/files/pictures/R0011016.JPG";
+        UploadTask uTask = new UploadTask(getApplicationContext()); //
+        uTask.start();*/
+
     }
 
     @Override

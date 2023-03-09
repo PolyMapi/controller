@@ -9,16 +9,16 @@ public class DownloadTask extends Thread{
     String[] imageRefs;
     Context context;
 
-    public DownloadTask(String[] imageRefs, Context context){
-        this.imageRefs = imageRefs;
+    public DownloadTask(Context context, String[] imageRefs){
         this.context = context;
+        this.imageRefs = imageRefs;
     }
 
     public void run(){
         long start = System.currentTimeMillis();
 
-        CameraAPI cam = new CameraAPI();
-        cam.downloadPictures(imageRefs, context);
+        String[] imagePaths = CameraAPI.getInstance().downloadPictures(imageRefs, context);
+
 
         long stop = System.currentTimeMillis();
         long elapsed = (stop - start) / 1000;

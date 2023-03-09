@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">PolyMapi</string>
-    <string name="start_tour">Start tour</string>
-    <string name="stop_tour">Stop tour</string>
+    <string name="start_capture">Start capture</string>
+    <string name="stop_capture">Stop capture</string>
+    <string name="start_download">Start download</string>
+    <string name="stop_download">Stop download</string>
     <string name="start_upload">Start upload</string>
     <string name="stop_upload">Stop upload</string>
     <string name="clear_database">Clear Database</string>

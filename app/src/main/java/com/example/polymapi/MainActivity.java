@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import android.location.Location;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -18,18 +16,29 @@ import java.io.IOException;
 
 import tasks.CaptureTask;
 import tasks.DownloadTask;
+import tasks.UploadTask;
+import tasks.GpsTask;
+
 import exif.ExifHandler;
 
+import dbHandler.DbHandler;
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
-import tasks.UploadTask;
+
+
+
 
 public class MainActivity extends AppCompatActivity {
-    private Button tourButton;
+    private Button captureButton;
+    private Button downloadButton;
     private Button uploadButton;
     private Button clearDbButter;
-    private boolean tourRunning = false;
+    private boolean captureRunning = false;
+    private boolean downloadRunning = false;
     private boolean uploadRunning = false;
+
+    private CaptureTask captureTask;
+    private GpsTask gpsTask;
 
     FeedReaderDbHelper dbHelper;
 
@@ -39,12 +48,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Get reference to the buttons
-        tourButton = findViewById(R.id.tour);
+        captureButton = findViewById(R.id.capture);
+        downloadButton = findViewById(R.id.download);
         uploadButton = findViewById(R.id.upload);
         clearDbButter = findViewById(R.id.clearDb);
 
         // Set the initial text of the button
-        tourButton.setOnClickListener(view -> toggleTourMode());
+        captureButton.setOnClickListener(view -> toggleCaptureMode());
+
+        downloadButton.setOnClickListener(view -> toggleDownloadMode());
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
 
@@ -52,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
+
+        /////TASK TESTS/////
 
         //CaptureTask cTask = new CaptureTask();
         //cTask.start();
@@ -74,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         imagePaths[4] = "/data/user/0/com.example.polymapi/files/pictures/R0011016.JPG";
         UploadTask uTask = new UploadTask(getApplicationContext()); //
         uTask.start();*/
+
     }
 
     @Override
@@ -83,84 +98,80 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void checkModeIntegrity() {
+        if ((captureRunning ? 1 : 0) + (downloadRunning ? 1 : 0) + (uploadRunning ? 1 : 0) > 1) {
+            throw new RuntimeException("Should never happen");
+        }
+    }
     /**
      * Updates the text of the Hello button.
      *
      */
-    private void toggleTourMode() {
-        if(tourRunning && uploadRunning) {
-            throw new RuntimeException("Should never happen");
-        }
-        if(uploadRunning) {
+    private void toggleCaptureMode() {
+        checkModeIntegrity();
+        if(downloadRunning || uploadRunning) {
             return;
         }
-        if(tourRunning) {
-            tourButton.setText(R.string.start_tour);
+        if(captureRunning) { // stop capture
+            captureButton.setText(R.string.start_capture);
+
+            captureTask.interrupt();
+            gpsTask.interrupt();
+        }
+        else { // start capture
+
+            captureButton.setText(R.string.stop_capture);
+
+            captureTask = new CaptureTask();
+            captureTask.start();
+
+            gpsTask = new GpsTask();
+            gpsTask.start();
+        }
+        captureRunning = !captureRunning;
+    }
+
+    private void toggleDownloadMode() {
+        checkModeIntegrity();
+        if(captureRunning || uploadRunning) {
+            return;
+        }
+        if(downloadRunning) {
+            downloadButton.setText(R.string.start_download);
         }
         else {
-            // The following part is a test of the ExifHandler class
-            String path = "/storage/emulated/0/Pictures/IMG_20230303_102701.jpg";
-            String res1;
-            String res2;
-            String res3;
-            try {
-                res1 = ExifHandler.readDate(path, this);
-                res2 = ExifHandler.readLongitude(path, this);
-                res3 = ExifHandler.readLatitude(path, this);
-
-                Log.d("res1: ", res1);
-                Log.d("res2: ", res2);
-                Log.d("res3: ", res3);
-
-                // This is an example of location given by ChatGPT, but you can replace it by a string if you wish so
-                Location location = new Location("");
-                location.setLatitude(37.807620);
-                String latitude = Location.convert(location.getLatitude(), Location.FORMAT_SECONDS);
-
-                ExifHandler.writeLatitude(path, this, latitude);
-                ExifHandler.writeDate(path, this, "2022:01:01 01:01:10");
-                ExifHandler.writeLongitude(path, this, "-122/1,15/1,54606/1000");
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            tourButton.setText(R.string.stop_tour);
+            downloadButton.setText(R.string.stop_download);
         }
-        tourRunning = !tourRunning;
+        downloadRunning = !downloadRunning;
     }
 
     private void toggleUploadMode() {
-        if(tourRunning && uploadRunning) {
-            throw new RuntimeException("Should never happen");
-        }
-        if(tourRunning) {
+        checkModeIntegrity();
+        if(captureRunning || downloadRunning) {
             return;
         }
         if(uploadRunning) {
             uploadButton.setText(R.string.start_upload);
         }
         else {
-
             uploadButton.setText(R.string.stop_upload);
         }
         uploadRunning = !uploadRunning;
-
     }
 
     private void clearDb() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        dbHelper.clearDb(db);
+        DbHandler.clearDb(dbHelper);
     }
 
-    private void addPendingTour(View tour) {
+    private void addPendingCapture(View capture) {
         // Get a reference to your table layout
-        TableLayout myLayout = findViewById(R.id.pending_tours);
+        TableLayout myLayout = findViewById(R.id.pending_capture);
 
         // Create a new table row
         TableRow row = new TableRow(this);
 
         // Add the View to the row
-        row.addView(tour);
+        row.addView(capture);
 
         // Add the row to the table layout
         myLayout.addView(row);

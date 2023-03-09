@@ -23,6 +23,7 @@ import tasks.CaptureTask;
 
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
+import tasks.GpsTask;
 
 public class MainActivity extends AppCompatActivity {
     private Button tourButton;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private Button clearDbButter;
     private boolean tourRunning = false;
     private boolean uploadRunning = false;
+
+    private CaptureTask captureTask;
+    private GpsTask gpsTask;
 
     FeedReaderDbHelper dbHelper;
 
@@ -88,35 +92,19 @@ public class MainActivity extends AppCompatActivity {
         }
         if(tourRunning) { // stop tour
             tourButton.setText(R.string.start_tour);
+
+            captureTask.interrupt();
+            gpsTask.interrupt();
         }
         else { // start tour
-            // The following part is a test of the ExifHandler class
-            String path = "/storage/emulated/0/Pictures/IMG_20230303_102701.jpg";
-            String res1;
-            String res2;
-            String res3;
-            try {
-                res1 = ExifHandler.readDate(path, this);
-                res2 = ExifHandler.readLongitude(path, this);
-                res3 = ExifHandler.readLatitude(path, this);
 
-                Log.d("res1: ", res1);
-                Log.d("res2: ", res2);
-                Log.d("res3: ", res3);
-
-                // This is an example of location given by ChatGPT, but you can replace it by a string if you wish so
-                Location location = new Location("");
-                location.setLatitude(37.807620);
-                String latitude = Location.convert(location.getLatitude(), Location.FORMAT_SECONDS);
-
-                ExifHandler.writeLatitude(path, this, latitude);
-                ExifHandler.writeDate(path, this, "2022:01:01 01:01:10");
-                ExifHandler.writeLongitude(path, this, "-122/1,15/1,54606/1000");
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             tourButton.setText(R.string.stop_tour);
+
+            captureTask = new CaptureTask();
+            captureTask.start();
+
+            gpsTask = new GpsTask();
+            gpsTask.start();
         }
         tourRunning = !tourRunning;
     }

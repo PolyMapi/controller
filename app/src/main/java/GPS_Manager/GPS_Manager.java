@@ -41,7 +41,7 @@ public class GPS_Manager {
             public void onComplete(@NonNull Task<Location> task) {
                 if(task.isSuccessful()){
                     Location location = task.getResult();
-                    Log.d("test", "on complete: " + location);
+                    Log.d("test", "on complete: " + "latitude = "+ location.getLatitude() +" / longitude =" + location.getLongitude());
                 } else {
                     task.getException().printStackTrace();
                 }

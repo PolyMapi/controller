@@ -58,7 +58,7 @@ import tasks.CaptureTask;
 
 import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
-
+import tasks.GpsTask;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -178,6 +178,8 @@ public class MainActivity extends AppCompatActivity {
             uploadButton.setText(R.string.start_upload);
         }
         else {
+            GpsTask gpsTask = new GpsTask(this);
+            gpsTask.start();
 
             uploadButton.setText(R.string.stop_upload);
         }

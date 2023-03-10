@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             captureTask.start();*/
 
             AskLocationPermission();
-            gpsTask = new GpsTask(this);
+            gpsTask = new GpsTask(this, 0, dbHelper); // TODO : get the right capture id
             gpsTask.start();
         }
         captureRunning = !captureRunning;

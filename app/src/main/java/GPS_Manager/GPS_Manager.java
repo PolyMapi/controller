@@ -20,9 +20,11 @@ public class GPS_Manager {
 
 
     private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
 
-    public GPS_Manager(AppCompatActivity activity) {
+    public GPS_Manager(AppCompatActivity activity, LocationCallback locationCallback) {
          fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+         this.locationCallback = locationCallback;
     }
 
     @SuppressLint( "MissingPermission")
@@ -41,6 +43,7 @@ public class GPS_Manager {
             public void onComplete(@NonNull Task<Location> task) {
                 if(task.isSuccessful()){
                     Location location = task.getResult();
+                    locationCallback.onLocationReceived(location);
                     Log.d("test", "on complete: " + "latitude = "+ location.getLatitude() +" / longitude =" + location.getLongitude());
                 } else {
                     task.getException().printStackTrace();

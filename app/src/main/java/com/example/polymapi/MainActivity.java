@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private Button captureButton;
     private Button downloadButton;
     private Button uploadButton;
-    private Button clearDbButter;
+    private Button clearDbButton;
     private boolean captureRunning = false;
     private boolean downloadRunning = false;
     private boolean uploadRunning = false;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         captureButton = findViewById(R.id.capture);
         downloadButton = findViewById(R.id.download);
         uploadButton = findViewById(R.id.upload);
-        clearDbButter = findViewById(R.id.clearDb);
+        clearDbButton = findViewById(R.id.clearDb);
 
         // Set the initial text of the button
         captureButton.setOnClickListener(view -> toggleCaptureMode());
@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
 
-        clearDbButter.setOnClickListener(view -> clearDb());
+        clearDbButton.setOnClickListener(view -> clearDb());
+
 
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
@@ -160,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
 
             captureButton.setText(R.string.stop_capture);
 
-            captureTask = new CaptureTask();
-            captureTask.start();
+/*            captureTask = new CaptureTask();
+            captureTask.start();*/
 
             AskLocationPermission();
             gpsTask = new GpsTask(this);
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         // Add the row to the table layout
         myLayout.addView(row);
     }
+
 
     private void databaseTest() {
         // Gets the data repository in write mode
@@ -306,6 +308,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     });
-
 
 }

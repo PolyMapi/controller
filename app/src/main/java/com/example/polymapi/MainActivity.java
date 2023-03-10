@@ -74,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean downloadRunning = false;
     private boolean uploadRunning = false;
 
-
-/*    ActivityMainBinding binding;*/
-    private FusedLocationProviderClient fusedLocationClient;
-
     private CaptureTask captureTask;
     private GpsTask gpsTask;
 
@@ -100,10 +96,6 @@ public class MainActivity extends AppCompatActivity {
         downloadButton.setOnClickListener(view -> toggleDownloadMode());
 
         uploadButton.setOnClickListener(view -> toggleUploadMode());
-
-/*        binding= ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());*/
-
 
         clearDbButter.setOnClickListener(view -> clearDb());
 
@@ -171,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             captureTask = new CaptureTask();
             captureTask.start();
 
+            AskLocationPermission();
             gpsTask = new GpsTask(this);
             gpsTask.start();
         }
@@ -254,5 +247,65 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
 
     }
+
+    public void AskLocationPermission() {
+        if (!hasLocationPermissions()) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showCustomDialog("Location Permission", "This app needs the location permission to track your location", "Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        multiplePermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+                    }
+                }, "cancel", null);
+            }else {
+                multiplePermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+            }
+        }
+
+    }
+
+
+
+    public boolean hasLocationPermissions(){
+        return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    void showCustomDialog(String title, String message,
+                          String positiveBtnTitle, DialogInterface.OnClickListener positiveListener,
+                          String negativeBtnTitle, DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveBtnTitle, positiveListener)
+                .setNegativeButton(negativeBtnTitle, negativeListener);
+        builder.create().show();
+    }
+
+
+
+    private ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+        @Override
+        public void onActivityResult(Map<String, Boolean> result) {
+            boolean finePermissionAllowed = false;
+            if(result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
+                finePermissionAllowed = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                if(!finePermissionAllowed) {
+                    if(!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                        showCustomDialog("Location Permission", "Need fine location permission, allow it in the app settings", "GoTo Settings", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                        Uri.parse("package" + BuildConfig.LIBRARY_PACKAGE_NAME));
+                                startActivity(intent);
+                            }
+                        }, "cancel", null);
+                    }
+                }
+            }
+        }
+    });
+
 
 }

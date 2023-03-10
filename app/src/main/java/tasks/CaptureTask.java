@@ -2,28 +2,38 @@ package tasks;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import camera_module.CameraAPI;
+import dbHandler.DbHandler;
+import dbHandler.FeedReaderDbHelper;
 
-public class CaptureTask extends Thread{
+public class CaptureTask extends Thread {
 
+    private int curentCaptureId;
+    private FeedReaderDbHelper dbHelper;
 
+    public CaptureTask(int curentCaptureId, FeedReaderDbHelper dbHelper) {
+        this.curentCaptureId = curentCaptureId;
+        this.dbHelper = dbHelper;
+    }
 
     public void run(){
         long start = System.currentTimeMillis();
 
-        //CameraAPI.getInstance().clearPictures();
+        ArrayList<String> imageRefs = new ArrayList<>();
+        while(!isInterrupted()) {
+            imageRefs.add(CameraAPI.getInstance().takePicture());
 
-        String[] imageRefs = new String[5];
-        for (int i=0; i<5; i++) {
-            imageRefs[i] = CameraAPI.getInstance().takePicture();
             try {
-                Thread.sleep(4000);
+                Thread.sleep(4500);
             } catch (InterruptedException e) {
                 Log.d("task", "Interruption");
             }
         }
+
         for(String ref : imageRefs){
-            Log.d("task", ref);
+            DbHandler.addImgRef(dbHelper, curentCaptureId, ref);
         }
 
         long stop = System.currentTimeMillis();

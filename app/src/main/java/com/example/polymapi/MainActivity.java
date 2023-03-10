@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
             captureButton.setText(R.string.stop_capture);
 
-            captureTask = new CaptureTask();
+            captureTask = new CaptureTask(0, dbHelper); // TODO : get current capture id
             captureTask.start();
 
             gpsTask = new GpsTask(this);

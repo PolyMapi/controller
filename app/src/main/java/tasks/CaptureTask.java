@@ -10,11 +10,11 @@ import dbHandler.FeedReaderDbHelper;
 
 public class CaptureTask extends Thread {
 
-    private int curentCaptureId;
+    private int currentCaptureId;
     private FeedReaderDbHelper dbHelper;
 
-    public CaptureTask(int curentCaptureId, FeedReaderDbHelper dbHelper) {
-        this.curentCaptureId = curentCaptureId;
+    public CaptureTask(int currentCaptureId, FeedReaderDbHelper dbHelper) {
+        this.currentCaptureId = currentCaptureId;
         this.dbHelper = dbHelper;
     }
 
@@ -33,7 +33,7 @@ public class CaptureTask extends Thread {
         }
 
         for(String ref : imageRefs){
-            DbHandler.addImgRef(dbHelper, curentCaptureId, ref);
+            DbHandler.addImgRef(dbHelper, currentCaptureId, ref);
         }
 
         long stop = System.currentTimeMillis();

@@ -41,14 +41,16 @@ public class ExifHandler {
 
     public static void writeLongitude(String fileName, MainActivity mainActivity, double value) throws IOException {
         ExifInterface exifInterface = checkWritingPermission(fileName, mainActivity);
-        exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, decimalToDms(value));
+        String dmsLongitude = decimalToDms(value);
+        exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, dmsLongitude);
         exifInterface.saveAttributes();
         // Log.d("Longitude: ", readLongitude(fileName, mainActivity));
     }
 
     public static void writeLatitude(String fileName, MainActivity mainActivity, double value) throws IOException {
         ExifInterface exifInterface = checkWritingPermission(fileName, mainActivity);
-        exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, decimalToDms(value));
+        String dmsLatitude = decimalToDms(value);
+        exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, dmsLatitude);
         exifInterface.saveAttributes();
         // Log.d("Latitude: ", readLatitude(fileName, mainActivity));
     }

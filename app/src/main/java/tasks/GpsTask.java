@@ -46,9 +46,11 @@ public class GpsTask extends Thread implements LocationCallback {
 
     @Override
     public void onLocationReceived(Location location) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault());
-        String dateTime = dateFormat.format(new Date(location.getTime()));
+        if (location != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault());
+            String dateTime = dateFormat.format(new Date(location.getTime()));
 
-        DbHandler.addCoordinates(dbHelper, captureId, location.getLatitude(), location.getLongitude(), dateTime);
+            DbHandler.addCoordinates(dbHelper, captureId, location.getLatitude(), location.getLongitude(), dateTime);
+        }
     }
 }

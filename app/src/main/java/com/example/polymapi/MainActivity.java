@@ -65,10 +65,6 @@ import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
 import tasks.GpsTask;
 
-
-
-
-
 public class MainActivity extends AppCompatActivity {
     private Button captureButton;
     private Button downloadButton;

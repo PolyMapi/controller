@@ -182,7 +182,7 @@ public class CameraAPI {
             File outputFile = new File(picturesDir, "R" + imageRef + ".JPG");
             OutputStream output = new FileOutputStream(outputFile);
 
-            InputStream input = connection.getInputStream();
+            InputStream input = connection.getInputStream(); // TODO line is dodgy. Works only in debug
             byte[] buffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {

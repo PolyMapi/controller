@@ -44,10 +44,14 @@ import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import java.io.IOException;
 
+import camera_module.CameraAPI;
+import dbHandler.ImgPathObj;
+import dbHandler.ImgRefObj;
 import tasks.CaptureTask;
 import tasks.DownloadTask;
 import tasks.UploadTask;
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     private CaptureTask captureTask;
     private GpsTask gpsTask;
 
+    private DownloadTask downloadTask;
+
     FeedReaderDbHelper dbHelper;
 
     @Override
@@ -102,30 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
-
-        /////TASK TESTS/////
-
-        //CaptureTask cTask = new CaptureTask();
-        //cTask.start();
-
-       /* String[] imageRefs = new String[5];
-        imageRefs[0] = "0011012";
-        imageRefs[1] = "0011013";
-        imageRefs[2] = "0011014";
-        imageRefs[3] = "0011015";
-        imageRefs[4] = "0011016";
-
-        DownloadTask dTask = new DownloadTask(getApplicationContext(), imageRefs);
-        dTask.start();*/
-
-        /*String[] imagePaths = new String[5];
-        imagePaths[0] = "/data/user/0/com.example.polymapi/files/pictures/R0011012.JPG";
-        imagePaths[1] = "/data/user/0/com.example.polymapi/files/pictures/R0011013.JPG";
-        imagePaths[2] = "/data/user/0/com.example.polymapi/files/pictures/R0011014.JPG";
-        imagePaths[3] = "/data/user/0/com.example.polymapi/files/pictures/R0011015.JPG";
-        imagePaths[4] = "/data/user/0/com.example.polymapi/files/pictures/R0011016.JPG";
-        UploadTask uTask = new UploadTask(getApplicationContext()); //
-        uTask.start();*/
 
     }
 
@@ -161,8 +143,10 @@ public class MainActivity extends AppCompatActivity {
 
             captureButton.setText(R.string.stop_capture);
 
-/*            captureTask = new CaptureTask();
-            captureTask.start();*/
+            // TODO : check permissions and wifi connection to camera
+
+            captureTask = new CaptureTask(0, dbHelper);
+            captureTask.start();
 
             AskLocationPermission();
             gpsTask = new GpsTask(this, 0, dbHelper); // TODO : get the right capture id
@@ -178,9 +162,14 @@ public class MainActivity extends AppCompatActivity {
         }
         if(downloadRunning) {
             downloadButton.setText(R.string.start_download);
+            //TODO : check if interruption is possible
+            downloadTask.interrupt();
         }
         else {
             downloadButton.setText(R.string.stop_download);
+
+            downloadTask = new DownloadTask(this, dbHelper);
+            downloadTask.start();
         }
         downloadRunning = !downloadRunning;
     }
@@ -196,9 +185,43 @@ public class MainActivity extends AppCompatActivity {
         else {
 
             uploadButton.setText(R.string.stop_upload);
+
+            ArrayList<ImgPathObj> imgPaths = DbHandler.getImgPathsData(dbHelper, 0);
+
+            for (ImgPathObj imgPath : imgPaths) {
+                try {
+                    String latitude = ExifHandler.readLatitude(imgPath.imgPath, this);
+                    String longitude = ExifHandler.readLongitude(imgPath.imgPath, this);
+
+                    double[] coords = convert(latitude, longitude);
+                    Log.d("coordinatesTest", "toggleUploadMode: " + imgPath.imgPath + ", lat : " + coords[0] + ", longitude : " + coords[1]);
+                    // TODO : coordinates are wrong
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+            }
         }
         uploadRunning = !uploadRunning;
     }
+
+    public static double[] convert(String latitude, String longitude) {
+        String[] latParts = latitude.split(",");
+        String[] longParts = longitude.split(",");
+        int[] latInts = new int[3];
+        int[] longInts = new int[3];
+        for (int i = 0; i < 3; i++) {
+            latInts[i] = Integer.parseInt(latParts[i].split("/")[0]);
+            longInts[i] = Integer.parseInt(longParts[i].split("/")[0]);
+        }
+        double lat = (double) latInts[0] + ((double) latInts[1] / 60.0) + ((double) latInts[2] / 3600.0);
+        double longi = (double) longInts[0] + ((double) longInts[1] / 60.0) + ((double) longInts[2] / 3600.0);
+        lat *= (latitude.contains("S") ? -1 : 1);
+        longi *= (longitude.contains("W") ? -1 : 1);
+        return new double[]{lat, longi};
+    }
+
 
     private void clearDb() {
         DbHandler.clearDb(dbHelper);

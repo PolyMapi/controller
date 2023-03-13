@@ -25,7 +25,11 @@ public class ExifHandler {
     }
 
     public static String readLatitude(String fileName, MainActivity mainActivity) throws IOException {
-        return checkReadingPermission(fileName, mainActivity).getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+        // return checkReadingPermission(fileName, mainActivity).getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+
+        ExifInterface exif = checkReadingPermission(fileName, mainActivity);
+        String latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+        return latitude;
     }
 
     public static void writeDate(String fileName, MainActivity mainActivity, String value) throws IOException {
@@ -35,18 +39,18 @@ public class ExifHandler {
         Log.d("Date: ", readDate(fileName, mainActivity));
     }
 
-    public static void writeLongitude(String fileName, MainActivity mainActivity, String value) throws IOException {
+    public static void writeLongitude(String fileName, MainActivity mainActivity, double value) throws IOException {
         ExifInterface exifInterface = checkWritingPermission(fileName, mainActivity);
-        exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, value);
+        exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, decimalToDms(value));
         exifInterface.saveAttributes();
-        Log.d("Longitude: ", readLongitude(fileName, mainActivity));
+        // Log.d("Longitude: ", readLongitude(fileName, mainActivity));
     }
 
-    public static void writeLatitude(String fileName, MainActivity mainActivity, String value) throws IOException {
+    public static void writeLatitude(String fileName, MainActivity mainActivity, double value) throws IOException {
         ExifInterface exifInterface = checkWritingPermission(fileName, mainActivity);
-        exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, value);
+        exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, decimalToDms(value));
         exifInterface.saveAttributes();
-        Log.d("Latitude: ", readLatitude(fileName, mainActivity));
+        // Log.d("Latitude: ", readLatitude(fileName, mainActivity));
     }
 
     private static ExifInterface checkWritingPermission (String fileName, MainActivity mainActivity) throws IOException {
@@ -78,30 +82,12 @@ public class ExifHandler {
         throw new RuntimeException("Permission not granted");
     }
 
-    /*// The following part is a test of the ExifHandler class
-    String path = "/storage/emulated/0/Pictures/IMG_20230303_102701.jpg";
-    String res1;
-    String res2;
-    String res3;
-            try {
-        res1 = ExifHandler.readDate(path, this);
-        res2 = ExifHandler.readLongitude(path, this);
-        res3 = ExifHandler.readLatitude(path, this);
-
-        Log.d("res1: ", res1);
-        Log.d("res2: ", res2);
-        Log.d("res3: ", res3);
-
-        // This is an example of location given by ChatGPT, but you can replace it by a string if you wish so
-        Location location = new Location("");
-        location.setLatitude(37.807620);
-        String latitude = Location.convert(location.getLatitude(), Location.FORMAT_SECONDS);
-
-        ExifHandler.writeLatitude(path, this, latitude);
-        ExifHandler.writeDate(path, this, "2022:01:01 01:01:10");
-        ExifHandler.writeLongitude(path, this, "-122/1,15/1,54606/1000");
-
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }*/
+    private static String decimalToDms(double decimalDegrees) {
+        int degrees = (int) decimalDegrees;
+        decimalDegrees = Math.abs(decimalDegrees - degrees) * 60;
+        int minutes = (int) decimalDegrees;
+        decimalDegrees = (decimalDegrees - minutes) * 60;
+        int seconds = (int) (decimalDegrees * 1000);
+        return degrees + "/1," + minutes + "/1," + seconds + "/1000";
+    }
 }

@@ -32,14 +32,14 @@ public class GpsTask extends Thread implements LocationCallback {
 
         GPS_Manager gps_manager = new GPS_Manager(activity, this);
 
-        while(!isInterrupted()) {
+        while(!interrupted()) {
 
-            gps_manager.getLastLocation();
+            gps_manager.getLastLocation(); // callback is onLocationReceived()
 
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Log.d("task", "Interruption");
+                return;
             }
         }
     }

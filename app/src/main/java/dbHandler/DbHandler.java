@@ -10,6 +10,13 @@ import java.util.List;
 
 public class DbHandler {
 
+    //=========================== UTILS ============================
+    public static int getNewCaptureId(FeedReaderDbHelper dbHelper) {
+
+        // TODO : Implements
+        throw new RuntimeException("Not yet implemented");
+    }
+
     public static void clearDb(FeedReaderDbHelper dbHelper) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -33,6 +40,8 @@ public class DbHandler {
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.ImgRefsEntry.TABLE_NAME, null, values);
+
+        Log.d("database", "addImgRef: saved img " + imgRef);
     }
 
     /*
@@ -140,6 +149,8 @@ public class DbHandler {
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.CoordinatesEntry.TABLE_NAME, null, values);
+
+        Log.d("database", "addCoordinates: saved coordinates lat : " + latitude + " long : " + longitude + " timestamp : " + timestamp);
     }
 
     /*

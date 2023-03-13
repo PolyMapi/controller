@@ -18,27 +18,16 @@ public class CaptureTask extends Thread {
         this.dbHelper = dbHelper;
     }
 
-    public void run(){
-        long start = System.currentTimeMillis();
-
-        ArrayList<String> imageRefs = new ArrayList<>();
-        while(!isInterrupted()) {
-            imageRefs.add(CameraAPI.getInstance().takePicture());
+    public void run() {
+        while (!interrupted()) {
+            String imgRef = CameraAPI.getInstance().takePicture();
+            DbHandler.addImgRef(dbHelper, currentCaptureId, imgRef);
 
             try {
                 Thread.sleep(4500);
             } catch (InterruptedException e) {
-                Log.d("task", "Interruption");
+                break;
             }
         }
-
-        for(String ref : imageRefs){
-            DbHandler.addImgRef(dbHelper, currentCaptureId, ref);
-        }
-
-        long stop = System.currentTimeMillis();
-        long elapsed = (stop - start) / 1000;
-        Log.d("task", "END");
-        Log.d("task","Durée des captures : " + elapsed + "s");
     }
 }

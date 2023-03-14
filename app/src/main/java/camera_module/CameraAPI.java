@@ -101,7 +101,7 @@ public class CameraAPI {
     //initialize the camera
     //  with 5376x2688 resolution if highResolution = true,
     //  with 2048x1024 resolution else
-    public void initCamera(boolean highResolution) {
+    public void initCamera(boolean highResolution) { // TODO : What if there was already a session on the camera
         nameRef = 0;
         try {
             //begin session and get sessionId
@@ -118,7 +118,6 @@ public class CameraAPI {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("task", "initCamera done");
     }
 
     //take a picture and return the image reference
@@ -191,7 +190,6 @@ public class CameraAPI {
 
             output.close();
             input.close();
-            Log.d("task", "download " + imageRef + " completed");
             return context.getFilesDir().toString() + "/pictures/R" + imageRef + ".JPG";
         } catch (IOException e) {
             throw new RuntimeException(e);

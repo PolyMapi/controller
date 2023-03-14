@@ -1,6 +1,7 @@
 package com.example.polymapi;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 
@@ -8,6 +9,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import android.view.View;
@@ -53,6 +58,7 @@ import camera_module.CameraAPI;
 import dbHandler.ImgPathObj;
 import dbHandler.ImgRefObj;
 import tasks.CaptureTask;
+import tasks.DownloadCallback;
 import tasks.DownloadTask;
 import tasks.UploadTask;
 import tasks.GpsTask;
@@ -65,13 +71,13 @@ import dbHandler.FeedReaderContract;
 import dbHandler.FeedReaderDbHelper;
 import tasks.GpsTask;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements DownloadCallback {
     private Button captureButton;
-    private Button downloadButton;
+    public Button downloadButton;
     private Button uploadButton;
     private Button clearDbButton;
     private boolean captureRunning = false;
-    private boolean downloadRunning = false;
+    public boolean downloadRunning = false;
     private boolean uploadRunning = false;
 
     private CaptureTask captureTask;
@@ -119,10 +125,6 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException("Should never happen");
         }
     }
-    /**
-     * Updates the text of the Hello button.
-     *
-     */
 
     private void toggleCaptureMode() {
         checkModeIntegrity();
@@ -139,13 +141,13 @@ public class MainActivity extends AppCompatActivity {
 
             captureButton.setText(R.string.stop_capture);
 
-            // TODO : check permissions and wifi connection to camera
+            int newCaptureId = DbHandler.getNewCaptureId(dbHelper);
 
-            captureTask = new CaptureTask(0, dbHelper);
+            captureTask = new CaptureTask(newCaptureId, dbHelper);
             captureTask.start();
 
             AskLocationPermission();
-            gpsTask = new GpsTask(this, 0, dbHelper); // TODO : get the right capture id
+            gpsTask = new GpsTask(this, newCaptureId, dbHelper);
             gpsTask.start();
         }
         captureRunning = !captureRunning;
@@ -156,18 +158,19 @@ public class MainActivity extends AppCompatActivity {
         if(captureRunning || uploadRunning) {
             return;
         }
-        if(downloadRunning) {
-            downloadButton.setText(R.string.start_download);
-            //TODO : check if interruption is possible
-            downloadTask.interrupt();
-        }
-        else {
-            downloadButton.setText(R.string.stop_download);
+        if(!downloadRunning) {
 
-            downloadTask = new DownloadTask(this, dbHelper);
+            // disable button while downloading
+            downloadButton.setText("downloading...");
+            downloadButton.setEnabled(false);
+
+            // start download
+            downloadTask = new DownloadTask(this, dbHelper, this);
             downloadTask.start();
+
+            downloadRunning = true;
         }
-        downloadRunning = !downloadRunning;
+
     }
 
     private void toggleUploadMode() {
@@ -190,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                     String longitude = ExifHandler.readLongitude(imgPath.imgPath, this);
 
                     double[] coords = convert(latitude, longitude);
-                    Log.d("coordinatesTest", "toggleUploadMode: " + imgPath.imgPath + ", lat : " + coords[0] + ", longitude : " + coords[1]);
+                    Log.d("Debug", "toggleUploadMode: " + imgPath.imgPath + ", lat : " + coords[0] + ", longitude : " + coords[1]);
                     // TODO : coordinates are wrong
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -218,6 +221,19 @@ public class MainActivity extends AppCompatActivity {
         return new double[]{lat, longi};
     }
 
+    @Override
+    public void onDownloadFinished() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                downloadButton.setText(R.string.start_download);
+                downloadButton.setEnabled(true);
+
+                downloadRunning = false;
+            }
+        });
+    }
 
     private void clearDb() {
         DbHandler.clearDb(dbHelper);
@@ -237,37 +253,6 @@ public class MainActivity extends AppCompatActivity {
         myLayout.addView(row);
     }
 
-
-    private void databaseTest() {
-        // Gets the data repository in write mode
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        // Clear the table by deleting all rows
-        int rowsDeleted = db.delete(FeedReaderContract.ImgRefsEntry.TABLE_NAME, null, null);
-
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID, 7);
-        values.put(FeedReaderContract.ImgRefsEntry.COLUMN_NAME_REF, "1234567");
-
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(FeedReaderContract.ImgRefsEntry.TABLE_NAME, null, values);
-
-        Cursor cursor = db.query(
-                FeedReaderContract.ImgRefsEntry.TABLE_NAME,   // The table to query
-                null,                                         // The array of columns to return (pass null to get all)
-                null,                                         // The columns for the WHERE clause
-                null,                                         // The values for the WHERE clause
-                null,                                         // don't group the rows
-                null,                                         // don't filter by row groups
-                null                                          // The sort order
-        );
-
-        cursor.moveToNext();
-        int capture_Id = cursor.getInt(cursor.getColumnIndexOrThrow(FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID));
-        cursor.close();
-
-    }
 
     public void AskLocationPermission() {
         if (!hasLocationPermissions()) {
@@ -327,5 +312,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     });
-
 }

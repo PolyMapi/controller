@@ -27,16 +27,19 @@ public class DownloadTask extends Thread {
 
     FeedReaderDbHelper dbHelper;
 
-    public DownloadTask(MainActivity activity, FeedReaderDbHelper dbHelper){
+    DownloadCallback callback;
+
+    public DownloadTask(MainActivity activity, FeedReaderDbHelper dbHelper, DownloadCallback callback){
         this.activity = activity;
         this.dbHelper = dbHelper;
+        this.callback = callback;
     }
 
     public void run(){
 
         // find a capture ID in both tables
         int captureId = getCaptureId();
-        if (captureId < 0) { // TODO : manage error case
+        if (captureId < 0) {
             throw new RuntimeException("Capture id can't be negative");
         }
 
@@ -61,7 +64,7 @@ public class DownloadTask extends Thread {
                     ExifHandler.writeLatitude(imgPath, activity, currentCoordinates.latitude);
                     ExifHandler.writeLongitude(imgPath, activity, currentCoordinates.longitude);
                 } else {
-                    // TODO : Error case. is it even possible ?
+                    throw new RuntimeException();
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -76,6 +79,9 @@ public class DownloadTask extends Thread {
         // clean up the other 2 tables
         DbHandler.deleteImgRefsByCaptureId(dbHelper, captureId);
         DbHandler.deleteCoordinatesByCaptureId(dbHelper, captureId);
+
+        // notify listener that download is done
+        callback.onDownloadFinished();
 
     }
 

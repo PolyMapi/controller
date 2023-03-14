@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DbHandler {
@@ -13,8 +14,31 @@ public class DbHandler {
     //=========================== UTILS ============================
     public static int getNewCaptureId(FeedReaderDbHelper dbHelper) {
 
-        // TODO : Implements
-        throw new RuntimeException("Not yet implemented");
+        int[] array1 = getImgRefsCaptureId(dbHelper);
+        int[] array2 = getCoordinatesCaptureId(dbHelper);
+        int[] array3 = getImgPathsCaptureId(dbHelper);
+
+        // Combine the arrays
+        int[] combinedArray = new int[array1.length + array2.length + array3.length];
+        System.arraycopy(array1, 0, combinedArray, 0, array1.length);
+        System.arraycopy(array2, 0, combinedArray, array1.length, array2.length);
+        System.arraycopy(array3, 0, combinedArray, array1.length + array2.length, array3.length);
+
+        // Sort the array
+        Arrays.sort(combinedArray);
+
+        // Iterate through the array and find the lowest non-negative integer
+        int lowestNonNegative = 0;
+        for (int i = 0; i < combinedArray.length; i++) {
+            if (combinedArray[i] >= 0) {
+                if (combinedArray[i] > lowestNonNegative) {
+                    break;
+                }
+                lowestNonNegative++;
+            }
+        }
+
+        return lowestNonNegative;
     }
 
     public static void clearDb(FeedReaderDbHelper dbHelper) {
@@ -41,7 +65,7 @@ public class DbHandler {
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.ImgRefsEntry.TABLE_NAME, null, values);
 
-        Log.d("database", "addImgRef: saved img " + imgRef);
+        Log.d("Debug", "addImgRef: saved img " + imgRef);
     }
 
     /*
@@ -150,7 +174,7 @@ public class DbHandler {
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.CoordinatesEntry.TABLE_NAME, null, values);
 
-        Log.d("database", "addCoordinates: saved coordinates lat : " + latitude + " long : " + longitude + " timestamp : " + timestamp);
+        Log.d("Debug", "addCoordinates: saved coordinates lat : " + latitude + " long : " + longitude + " timestamp : " + timestamp);
     }
 
     /*
@@ -363,7 +387,6 @@ public class DbHandler {
     //=========================== TESTING ============================
 
     public static void databaseTest(FeedReaderDbHelper dbHelper) {
-        Log.d("dbTest", "START IMGREF TEST");
 
         clearDb(dbHelper);
 

@@ -36,7 +36,6 @@ public class ExifHandler {
         ExifInterface exifInterface = checkWritingPermission(fileName, mainActivity);
         exifInterface.setAttribute(ExifInterface.TAG_DATETIME, value);
         exifInterface.saveAttributes();
-        Log.d("Date: ", readDate(fileName, mainActivity));
     }
 
     public static void writeLongitude(String fileName, MainActivity mainActivity, double value) throws IOException {
@@ -44,7 +43,6 @@ public class ExifHandler {
         String dmsLongitude = decimalToDms(value);
         exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, dmsLongitude);
         exifInterface.saveAttributes();
-        // Log.d("Longitude: ", readLongitude(fileName, mainActivity));
     }
 
     public static void writeLatitude(String fileName, MainActivity mainActivity, double value) throws IOException {
@@ -52,7 +50,6 @@ public class ExifHandler {
         String dmsLatitude = decimalToDms(value);
         exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, dmsLatitude);
         exifInterface.saveAttributes();
-        // Log.d("Latitude: ", readLatitude(fileName, mainActivity));
     }
 
     private static ExifInterface checkWritingPermission (String fileName, MainActivity mainActivity) throws IOException {

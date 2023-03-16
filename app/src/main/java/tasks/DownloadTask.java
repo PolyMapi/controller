@@ -40,7 +40,7 @@ public class DownloadTask extends Thread {
         // find a capture ID in both tables
         int captureId = getCaptureId();
         if (captureId < 0) {
-            throw new RuntimeException("Capture id can't be negative");
+            return;
         }
 
         // Download all the images from that capture ID and store the paths in an Array

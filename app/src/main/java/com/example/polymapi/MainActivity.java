@@ -112,6 +112,8 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
         // DataBase setup
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
 
+        updateTable();
+
     }
 
     @Override
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
 
             captureTask.interrupt();
             gpsTask.interrupt();
+            updateTable();
         }
         else { // start capture
 
@@ -150,8 +153,6 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
             AskLocationPermission();
             gpsTask = new GpsTask(this, newCaptureId, dbHelper);
             gpsTask.start();
-
-            addRow(newCaptureId, "Download pending");
         }
         captureRunning = !captureRunning;
     }
@@ -235,13 +236,14 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
 
                 downloadRunning = false;
 
-                // TODO : clear the rows and update them
+                updateTable();
             }
         });
     }
 
     private void clearDb() {
         DbHandler.clearDb(dbHelper);
+        updateTable();
     }
 
     private void addRow(int captureId, String state) {
@@ -273,13 +275,31 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
     private void clearRows() {
         TableLayout tableLayout = findViewById(R.id.pending_capture);
 
-        // Loop through all the child views of the TableLayout starting from the second row
+        // get all children to delete
+        ArrayList<View> childrenToDelete = new ArrayList<>();
         for (int i = 1; i < tableLayout.getChildCount(); i++) {
-            View child = tableLayout.getChildAt(i);
-            if (child instanceof TableRow) {
-                // If the child is a TableRow, remove it from the TableLayout
-                tableLayout.removeView(child);
+            if (tableLayout.getChildAt(i) instanceof TableRow) {
+                childrenToDelete.add(tableLayout.getChildAt(i));
             }
+        }
+
+        // delete children
+        for (View currentChild : childrenToDelete) {
+            tableLayout.removeView(currentChild);
+        }
+    }
+
+    private void updateTable() {
+        clearRows();
+
+        int[] imgRefCaptureIds = DbHandler.getImgRefsCaptureId(dbHelper);
+        for (int imgRefCaptureId : imgRefCaptureIds) {
+            addRow(imgRefCaptureId, "Download pending");
+        }
+
+        int[] imgPathCaptureIds = DbHandler.getImgPathsCaptureId(dbHelper);
+        for (int imgPathCaptureId : imgPathCaptureIds) {
+            addRow(imgPathCaptureId, "Upload pending");
         }
     }
 

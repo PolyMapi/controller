@@ -75,9 +75,7 @@ public class DbHandler {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String[] projection = {
-                FeedReaderContract.ImgRefsEntry._ID,
-                FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID,
-                FeedReaderContract.ImgRefsEntry.COLUMN_NAME_REF
+                FeedReaderContract.ImgRefsEntry.COLUMN_NAME_CAPTURE_ID
         };
 
         Cursor cursor = db.query(true,                       // DISTINCT keyword to retrieve only unique rows
@@ -184,11 +182,7 @@ public class DbHandler {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String[] projection = {
-                FeedReaderContract.CoordinatesEntry._ID,
-                FeedReaderContract.CoordinatesEntry.COLUMN_NAME_CAPTURE_ID,
-                FeedReaderContract.CoordinatesEntry.COLUMN_NAME_LATITUDE,
-                FeedReaderContract.CoordinatesEntry.COLUMN_NAME_LONGITUDE,
-                FeedReaderContract.CoordinatesEntry.COLUMN_NAME_TIMESTAMP,
+                FeedReaderContract.CoordinatesEntry.COLUMN_NAME_CAPTURE_ID
         };
 
         Cursor cursor = db.query(true,                       // DISTINCT keyword to retrieve only unique rows
@@ -299,9 +293,7 @@ public class DbHandler {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String[] projection = {
-                FeedReaderContract.ImgPathEntry._ID,
-                FeedReaderContract.ImgPathEntry.COLUMN_NAME_CAPTURE_ID,
-                FeedReaderContract.ImgPathEntry.COLUMN_NAME_PATH
+                FeedReaderContract.ImgPathEntry.COLUMN_NAME_CAPTURE_ID
         };
 
         Cursor cursor = db.query(true,                       // DISTINCT keyword to retrieve only unique rows

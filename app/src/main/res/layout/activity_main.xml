@@ -54,6 +54,20 @@
         app:layout_constraintBottom_toTopOf="@+id/download"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+    <!-- Add a top row with two cells -->
+    <TableRow>
+        <TextView
+            android:text="Capture ID"
+            android:textStyle="bold"
+            android:padding="5dp" />
+        <TextView
+            android:text="State"
+            android:textStyle="bold"
+            android:padding="5dp" />
+    </TableRow>
+
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

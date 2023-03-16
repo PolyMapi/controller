@@ -37,6 +37,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.polymapi.databinding.ActivityMainBinding;
@@ -149,6 +150,8 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
             AskLocationPermission();
             gpsTask = new GpsTask(this, newCaptureId, dbHelper);
             gpsTask.start();
+
+            addRow(newCaptureId, "Download pending");
         }
         captureRunning = !captureRunning;
     }
@@ -231,6 +234,8 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
                 downloadButton.setEnabled(true);
 
                 downloadRunning = false;
+
+                // TODO : clear the rows and update them
             }
         });
     }
@@ -239,20 +244,44 @@ public class MainActivity extends AppCompatActivity  implements DownloadCallback
         DbHandler.clearDb(dbHelper);
     }
 
-    private void addPendingCapture(View capture) {
-        // Get a reference to your table layout
-        TableLayout myLayout = findViewById(R.id.pending_capture);
+    private void addRow(int captureId, String state) {
+        TableLayout tableLayout = findViewById(R.id.pending_capture);
 
-        // Create a new table row
+        // Create a new TableRow
         TableRow row = new TableRow(this);
 
-        // Add the View to the row
-        row.addView(capture);
+        // Create two new TextViews for the cells
+        TextView captureIdTextView = new TextView(this);
+        TextView stateTextView = new TextView(this);
 
-        // Add the row to the table layout
-        myLayout.addView(row);
+        // Set the text content for the TextViews
+        captureIdTextView.setText(String.valueOf(captureId));
+        stateTextView.setText(state);
+
+        // Add some padding to the TextViews for better readability
+        captureIdTextView.setPadding(5, 5, 5, 5);
+        stateTextView.setPadding(5, 5, 5, 5);
+
+        // Add the TextViews to the TableRow
+        row.addView(captureIdTextView);
+        row.addView(stateTextView);
+
+        // Add the TableRow to the TableLayout
+        tableLayout.addView(row);
     }
 
+    private void clearRows() {
+        TableLayout tableLayout = findViewById(R.id.pending_capture);
+
+        // Loop through all the child views of the TableLayout starting from the second row
+        for (int i = 1; i < tableLayout.getChildCount(); i++) {
+            View child = tableLayout.getChildAt(i);
+            if (child instanceof TableRow) {
+                // If the child is a TableRow, remove it from the TableLayout
+                tableLayout.removeView(child);
+            }
+        }
+    }
 
     public void AskLocationPermission() {
         if (!hasLocationPermissions()) {

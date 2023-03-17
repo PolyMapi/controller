@@ -47,6 +47,8 @@ public class DbHandler {
         db.delete(FeedReaderContract.ImgRefsEntry.TABLE_NAME, null, null);
         db.delete(FeedReaderContract.CoordinatesEntry.TABLE_NAME, null, null);
         db.delete(FeedReaderContract.ImgPathEntry.TABLE_NAME, null, null);
+
+        Log.d("Debug", "Database cleared");
     }
 
     //=========================== IMGREFS ============================
@@ -65,7 +67,7 @@ public class DbHandler {
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.ImgRefsEntry.TABLE_NAME, null, values);
 
-        Log.d("Debug", "addImgRef: saved img " + imgRef);
+        Log.d("Debug", "addImgRef: saved img ref " + imgRef);
     }
 
     /*
@@ -284,6 +286,8 @@ public class DbHandler {
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedReaderContract.ImgPathEntry.TABLE_NAME, null, values);
+
+        Log.d("Debug", "addImgPath: saved img path " + imgPath);
     }
 
     /*
